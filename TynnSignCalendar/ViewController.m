@@ -32,6 +32,11 @@
  */
 @property (strong,nonatomic) UIButton *signBtn;
 
+/**
+ 记录年月(正式使用时,不需要此属性)
+ */
+@property (strong,nonatomic) NSString *dateStr;
+
 @end
 
 @implementation ViewController{
@@ -87,6 +92,10 @@
     calendar.appearance.caseOptions = FSCalendarCaseOptionsWeekdayUsesSingleUpperCase|FSCalendarCaseOptionsHeaderUsesUpperCase;
     [self.view addSubview:calendar];
     self.calendar = calendar;
+    
+//    UIImageView *abc = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"abc.png"]];
+//    self.collectionView
+//    [self.calendar insertSubview:ImageView atIndex:0];
     //日历的背景
     UIImageView *calendarBack = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"signInCalandarBack"]];
     calendarBack.frame = CGRectMake(10, self.navigationController.navigationBar.height*2+30, calendar.width+30, calendar.height+45);
@@ -146,7 +155,7 @@
     }else if (!_count){
         _count = 1;
     }
-    NSString *dateStr = [NSString stringWithFormat:@"2017-11-%ld",_count];
+    NSString *dateStr = [NSString stringWithFormat:@"%@-%ld",self.dateStr,_count];
     _count++;
     [self.signInList addObject:dateStr];
     [self getSign];
@@ -182,7 +191,7 @@
 //获取日历范围,让日历出现时就知道该显示哪个月了哪一页了(根据系统时间来获取)
 +(NSArray *)getStartTimeAndFinalTime{
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"YYYY-MM-dd"];
+    [formatter setDateFormat:@"yyyy-MM-dd"];
     NSDate *datenow = [NSDate date];
     NSString *currentTimeString = [formatter stringFromDate:datenow];
     NSDate *newDate=[formatter dateFromString:currentTimeString];
@@ -208,6 +217,7 @@
     self.gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     //获取日历要显示的日期范围
     NSArray *timeArray = [ViewController getStartTimeAndFinalTime];
+    self.dateStr = [timeArray[0] substringToIndex:7];
     //设置最小和最大日期(在最小和最大日期之外的日期不能被选中,日期范围如果大于一个月,则日历可翻动)
     self.minimumDate = [self.dateFormatter dateFromString:timeArray[0]];
     self.maximumDate = [self.dateFormatter dateFromString:timeArray[1]];
